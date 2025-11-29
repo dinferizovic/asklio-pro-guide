@@ -253,7 +253,7 @@ export const ChatIntake = ({ onComplete }: ChatIntakeProps) => {
             <Button
               onClick={handleRunNegotiation}
               disabled={isLoading}
-              className="w-full bg-gradient-primary text-primary-foreground hover:opacity-90 transition-opacity"
+              className="w-full"
               size="lg"
             >
               {isLoading ? (

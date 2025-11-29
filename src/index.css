@@ -8,91 +8,91 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 210 20% 98%;
-    --foreground: 215 25% 15%;
+    --background: 220 14% 98%;
+    --foreground: 224 71% 4%;
 
     --card: 0 0% 100%;
-    --card-foreground: 215 25% 15%;
+    --card-foreground: 224 71% 4%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 215 25% 15%;
+    --popover-foreground: 224 71% 4%;
 
-    --primary: 195 85% 45%;
+    --primary: 243 75% 59%;
     --primary-foreground: 0 0% 100%;
     
-    --primary-hover: 195 85% 38%;
+    --primary-hover: 243 75% 54%;
     
-    --secondary: 195 70% 92%;
-    --secondary-foreground: 195 85% 25%;
+    --secondary: 220 14% 96%;
+    --secondary-foreground: 224 71% 4%;
 
-    --muted: 210 20% 95%;
-    --muted-foreground: 215 15% 45%;
+    --muted: 220 13% 95%;
+    --muted-foreground: 220 9% 46%;
 
-    --accent: 195 75% 88%;
-    --accent-foreground: 195 85% 25%;
+    --accent: 220 13% 95%;
+    --accent-foreground: 224 71% 4%;
 
     --destructive: 0 84% 60%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 215 20% 88%;
-    --input: 215 20% 88%;
-    --ring: 195 85% 45%;
+    --border: 220 13% 91%;
+    --input: 220 13% 91%;
+    --ring: 243 75% 59%;
 
     --radius: 0.75rem;
     
-    --chat-user: 195 85% 45%;
-    --chat-assistant: 210 20% 96%;
+    --chat-user: 243 75% 59%;
+    --chat-assistant: 220 13% 95%;
     
-    --gradient-primary: linear-gradient(135deg, hsl(195 85% 45%), hsl(180 70% 50%));
-    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(210 20% 98%));
+    --gradient-primary: linear-gradient(135deg, hsl(243 75% 59%), hsl(250 70% 65%));
+    --gradient-card: linear-gradient(145deg, hsl(0 0% 100%), hsl(220 14% 98%));
     
-    --shadow-sm: 0 2px 8px -2px hsl(215 25% 15% / 0.08);
-    --shadow-md: 0 4px 16px -4px hsl(215 25% 15% / 0.12);
-    --shadow-lg: 0 8px 24px -6px hsl(215 25% 15% / 0.16);
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.05);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.1), 0 2px 4px -2px hsl(0 0% 0% / 0.1);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.1), 0 4px 6px -4px hsl(0 0% 0% / 0.1);
     
     --transition-smooth: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
   }
 
   .dark {
-    --background: 215 30% 12%;
-    --foreground: 210 20% 95%;
+    --background: 224 71% 4%;
+    --foreground: 220 14% 98%;
 
-    --card: 215 25% 16%;
-    --card-foreground: 210 20% 95%;
+    --card: 224 71% 8%;
+    --card-foreground: 220 14% 98%;
 
-    --popover: 215 25% 16%;
-    --popover-foreground: 210 20% 95%;
+    --popover: 224 71% 8%;
+    --popover-foreground: 220 14% 98%;
 
-    --primary: 195 85% 55%;
-    --primary-foreground: 215 30% 10%;
+    --primary: 243 75% 59%;
+    --primary-foreground: 0 0% 100%;
     
-    --primary-hover: 195 85% 48%;
+    --primary-hover: 243 75% 54%;
 
     --secondary: 215 25% 20%;
-    --secondary-foreground: 210 20% 95%;
+    --secondary-foreground: 220 14% 98%;
 
     --muted: 215 25% 18%;
     --muted-foreground: 215 15% 60%;
 
-    --accent: 195 70% 25%;
-    --accent-foreground: 195 70% 90%;
+    --accent: 215 25% 18%;
+    --accent-foreground: 220 14% 98%;
 
     --destructive: 0 72% 55%;
-    --destructive-foreground: 210 20% 95%;
+    --destructive-foreground: 220 14% 98%;
 
     --border: 215 25% 22%;
     --input: 215 25% 22%;
-    --ring: 195 85% 55%;
+    --ring: 243 75% 59%;
     
-    --chat-user: 195 85% 55%;
+    --chat-user: 243 75% 59%;
     --chat-assistant: 215 25% 18%;
     
-    --gradient-primary: linear-gradient(135deg, hsl(195 85% 55%), hsl(180 70% 60%));
-    --gradient-card: linear-gradient(145deg, hsl(215 25% 16%), hsl(215 30% 14%));
+    --gradient-primary: linear-gradient(135deg, hsl(243 75% 59%), hsl(250 70% 65%));
+    --gradient-card: linear-gradient(145deg, hsl(224 71% 8%), hsl(224 71% 6%));
     
-    --shadow-sm: 0 2px 8px -2px hsl(0 0% 0% / 0.3);
-    --shadow-md: 0 4px 16px -4px hsl(0 0% 0% / 0.4);
-    --shadow-lg: 0 8px 24px -6px hsl(0 0% 0% / 0.5);
+    --shadow-sm: 0 1px 2px 0 hsl(0 0% 0% / 0.5);
+    --shadow-md: 0 4px 6px -1px hsl(0 0% 0% / 0.6), 0 2px 4px -2px hsl(0 0% 0% / 0.6);
+    --shadow-lg: 0 10px 15px -3px hsl(0 0% 0% / 0.6), 0 4px 6px -4px hsl(0 0% 0% / 0.6);
   }
 }
 
