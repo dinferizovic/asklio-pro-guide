@@ -37,10 +37,18 @@ export interface VendorOption {
   extras: string[];
 }
 
+interface Message {
+  id: string;
+  role: "assistant" | "user";
+  content: string;
+  timestamp: Date;
+}
+
 interface Session {
   id: string;
   title: string;
   mode: "intake" | "results";
+  messages: Message[];
   options: VendorOption[];
   selectedOption: VendorOption | null;
 }
@@ -51,6 +59,12 @@ const Index = () => {
     id: initialSessionId,
     title: "New Request",
     mode: "intake",
+    messages: [{
+      id: "1",
+      role: "assistant",
+      content: "Hello! I'm your procurement assistant. I'll help you find the best vendors for your purchase. Let's start with the basics - what would you like to buy? Please include quantities if you know them.",
+      timestamp: new Date(),
+    }],
     options: [],
     selectedOption: null,
   }]);
@@ -64,11 +78,25 @@ const Index = () => {
       id: newSessionId,
       title: "New Request",
       mode: "intake",
+      messages: [{
+        id: "1",
+        role: "assistant",
+        content: "Hello! I'm your procurement assistant. I'll help you find the best vendors for your purchase. Let's start with the basics - what would you like to buy? Please include quantities if you know them.",
+        timestamp: new Date(),
+      }],
       options: [],
       selectedOption: null,
     };
     setSessions((prev) => [newSession, ...prev]);
     setActiveSessionId(newSessionId);
+  };
+
+  const handleDeleteSession = (sessionId: string) => {
+    setSessions((prev) => prev.filter((s) => s.id !== sessionId));
+    // If deleting the active session, clear it
+    if (activeSessionId === sessionId) {
+      setActiveSessionId(null);
+    }
   };
 
   const handleSelectSession = (sessionId: string) => {
@@ -174,6 +202,7 @@ const Index = () => {
           onNewRequest={handleNewRequest}
           onSelectSession={handleSelectSession}
           onRenameSession={handleRenameSession}
+          onDeleteSession={handleDeleteSession}
         />
 
         {/* Right Main Content Area */}
@@ -209,6 +238,7 @@ const Index = () => {
                 </div>
               ) : activeSession.mode === "intake" ? (
                 <ChatIntake
+                  key={activeSession.id}
                   onComplete={handleNegotiationComplete}
                   onUpdateTitle={updateSessionTitle}
                 />
