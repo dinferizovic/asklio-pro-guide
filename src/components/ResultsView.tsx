@@ -10,24 +10,18 @@ interface ResultsViewProps {
   onReset: () => void;
 }
 
-export const ResultsView = ({
-  options,
-  selectedOption,
-  onSelectOption,
-  onReset,
-}: ResultsViewProps) => {
+export const ResultsView = ({ options, selectedOption, onSelectOption, onReset }: ResultsViewProps) => {
   return (
     <div className="space-y-6 animate-in fade-in-50 slide-in-from-bottom-4 duration-500">
       {/* Header */}
       <div className="text-center space-y-2">
         <h2 className="text-3xl font-bold text-foreground">Negotiation Results</h2>
-        <p className="text-muted-foreground">
-          We found {options.length} optimized options based on your requirements
-        </p>
+        <p className="text-muted-foreground">We found {options.length} optimized options based on your requirements</p>
       </div>
 
       {/* Options Grid */}
       <div className="grid gap-6 md:grid-cols-2">
+        /*{" "}
         {options.map((option) => (
           <OptionCard
             key={option.label}
@@ -35,7 +29,8 @@ export const ResultsView = ({
             isSelected={selectedOption?.label === option.label}
             onClick={() => onSelectOption(option)}
           />
-        ))}
+        ))}{" "}
+        */
       </div>
 
       {/* Selection Summary */}
@@ -61,12 +56,7 @@ export const ResultsView = ({
 
       {/* Action Button */}
       <div className="flex justify-center pt-4">
-        <Button
-          onClick={onReset}
-          variant="outline"
-          size="lg"
-          className="gap-2"
-        >
+        <Button onClick={onReset} variant="outline" size="lg" className="gap-2">
           <RotateCcw className="h-4 w-4" />
           Start New Request
         </Button>

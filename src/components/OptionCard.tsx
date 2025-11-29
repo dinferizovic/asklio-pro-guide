@@ -18,6 +18,7 @@ interface OptionCardProps {
 
 export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => {
   const isRecommended = option.label.includes("Recommended");
+  const isRecommended = (option ?? []).includes(option.)
 
   return (
     <button
