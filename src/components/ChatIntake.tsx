@@ -221,7 +221,45 @@ export const ChatIntake = ({ onComplete }: ChatIntakeProps) => {
   };
 
   const isComplete = getNextQuestion() === null;
+  const isInitialState = messages.length === 1;
 
+  // Initial State: Centered search-like interface
+  if (isInitialState) {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-240px)]">
+        <div className="w-full max-w-2xl px-4">
+          {/* Title and Subtitle */}
+          <div className="text-center mb-8">
+            <h1 className="text-5xl font-bold text-foreground mb-3">LioAnswers</h1>
+            <p className="text-lg text-muted-foreground">AI-powered procurement optimization</p>
+          </div>
+
+          {/* Centered Input Field */}
+          <div className="flex gap-2">
+            <Input
+              value={inputValue}
+              onChange={(e) => setInputValue(e.target.value)}
+              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+              placeholder="What would you like to procure today?"
+              className="flex-1 h-14 text-base px-6 rounded-full shadow-sm"
+              disabled={isLoading}
+              autoFocus
+            />
+            <Button 
+              onClick={handleSendMessage} 
+              disabled={isLoading || !inputValue.trim()}
+              size="lg"
+              className="h-14 px-6 rounded-full"
+            >
+              <Send className="h-5 w-5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
+
+  // Chat Mode: Standard chat interface after first user message
   return (
     <div className="mx-auto max-w-3xl">
       <div className="rounded-2xl border border-border bg-card shadow-lg">
