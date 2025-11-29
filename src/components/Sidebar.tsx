@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Plus, Edit2, Check, X } from "lucide-react";
+import { Plus, Edit2, Check, X, Trash2 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
@@ -16,6 +16,7 @@ interface SidebarProps {
   onNewRequest: () => void;
   onSelectSession: (sessionId: string) => void;
   onRenameSession: (sessionId: string, newTitle: string) => void;
+  onDeleteSession: (sessionId: string) => void;
 }
 
 export const Sidebar = ({
@@ -24,6 +25,7 @@ export const Sidebar = ({
   onNewRequest,
   onSelectSession,
   onRenameSession,
+  onDeleteSession,
 }: SidebarProps) => {
   const [editingSessionId, setEditingSessionId] = useState<string | null>(null);
   const [editTitle, setEditTitle] = useState("");
@@ -127,6 +129,16 @@ export const Sidebar = ({
                       title="Rename"
                     >
                       <Edit2 className="h-3 w-3 text-muted-foreground" />
+                    </button>
+                    <button
+                      onClick={(e) => {
+                        e.stopPropagation();
+                        onDeleteSession(session.id);
+                      }}
+                      className="opacity-0 group-hover:opacity-100 p-2 hover:bg-destructive/10 rounded transition-opacity"
+                      title="Delete"
+                    >
+                      <Trash2 className="h-3 w-3 text-destructive" />
                     </button>
                   </div>
                 )}
