@@ -23,11 +23,11 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
     <button
       onClick={onClick}
       className={cn(
-        "relative w-full rounded-2xl border-2 bg-gradient-card p-6 text-left shadow-md transition-all duration-300 hover:shadow-lg hover:scale-[1.02]",
+        "relative w-full rounded-xl border-2 bg-card p-6 text-left shadow-sm transition-all duration-300 hover:shadow-md",
         isSelected
-          ? "border-primary ring-2 ring-primary/20"
-          : "border-border hover:border-primary/50",
-        isRecommended && "border-primary/30"
+          ? "border-primary ring-4 ring-primary/20 shadow-lg shadow-primary/20"
+          : "border-border hover:border-primary/30",
+        isRecommended && "border-primary/20"
       )}
     >
       {/* Selected Indicator */}
@@ -40,7 +40,7 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
       {/* Recommended Badge */}
       {isRecommended && (
         <div className="absolute -top-3 left-6">
-          <Badge className="bg-gradient-primary text-primary-foreground border-0 shadow-sm">
+          <Badge className="bg-primary text-primary-foreground border-0 shadow-sm">
             <Sparkles className="mr-1 h-3 w-3" />
             AI Recommended
           </Badge>

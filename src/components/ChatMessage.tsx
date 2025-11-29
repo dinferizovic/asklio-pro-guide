@@ -23,8 +23,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       )}
     >
       {isAssistant && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-gradient-primary">
-          <Bot className="h-5 w-5 text-primary-foreground" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-muted">
+          <Bot className="h-5 w-5 text-muted-foreground" />
         </div>
       )}
 
@@ -32,7 +32,7 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
         className={cn(
           "max-w-[80%] rounded-2xl px-4 py-3 shadow-sm",
           isAssistant
-            ? "bg-chat-assistant text-foreground"
+            ? "bg-chat-assistant text-foreground border border-border"
             : "bg-chat-user text-primary-foreground"
         )}
       >
@@ -40,8 +40,8 @@ export const ChatMessage = ({ message }: ChatMessageProps) => {
       </div>
 
       {!isAssistant && (
-        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-secondary">
-          <User className="h-5 w-5 text-secondary-foreground" />
+        <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary">
+          <User className="h-5 w-5 text-primary-foreground" />
         </div>
       )}
     </div>
