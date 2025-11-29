@@ -94,7 +94,8 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     try {
       setIsLoading(true);
 
-      const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+      const apiKey =
+        "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";
       if (!apiKey) {
         console.error("Missing NEXT_PUBLIC_OPENAI_API_KEY");
         return;
