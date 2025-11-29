@@ -1,11 +1,9 @@
 import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
+import { Card } from "@/components/ui/card";
 import { Send, Loader2 } from "lucide-react";
 import { ChatMessage } from "@/components/ChatMessage";
-import { toast } from "@/hooks/use-toast";
-import type { ProcurementRequest, PriorityWeights, Constraints, VendorOption } from "@/pages/Index";
 
 interface Message {
   id: string;
@@ -14,30 +12,55 @@ interface Message {
   timestamp: Date;
 }
 
+interface NegotiationData {
+  productRequest: string | null;
+  budget: string | null;
+  deadline: string | null;
+  qualityWeight: number | null;
+  speedWeight: number | null;
+}
+
+type ConversationStep = 0 | 1 | 2 | 3 | 4 | "complete";
+
 interface ChatIntakeProps {
-  onComplete: (options: VendorOption[]) => void;
+  onComplete: (options: any[]) => void;
   onUpdateTitle?: (title: string) => void;
 }
 
-const WEBHOOK_URL = "https://example.com/webhook/procurement/negotiate";
+const isGreeting = (text: string): boolean => {
+  const greetings = ["hi", "hello", "hey", "start", "help", "yo", "sup"];
+  const normalized = text.toLowerCase().trim();
+  return normalized.length < 15 || greetings.some(g => normalized === g || normalized.startsWith(g + " "));
+};
+
+const RatingButtons = ({ onSelect }: { onSelect: (rating: number) => void }) => (
+  <div className="flex gap-2 justify-center py-4">
+    {[1, 2, 3, 4, 5].map((num) => (
+      <Button
+        key={num}
+        onClick={() => onSelect(num)}
+        variant="outline"
+        size="lg"
+        className="w-12 h-12 text-lg hover:bg-primary hover:text-primary-foreground transition-colors"
+      >
+        {num}
+      </Button>
+    ))}
+  </div>
+);
 
 export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
-  const [messages, setMessages] = useState<Message[]>([
-    {
-      id: "1",
-      role: "assistant",
-      content: "Hello! I'm your procurement assistant. I'll help you find the best vendors for your purchase. Let's start with the basics - what would you like to buy? Please include quantities if you know them.",
-      timestamp: new Date(),
-    },
-  ]);
+  const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
-  const [isLoading, setIsLoading] = useState(false);
+  const [conversationStep, setConversationStep] = useState<ConversationStep>(0);
+  const [negotiationData, setNegotiationData] = useState<NegotiationData>({
+    productRequest: null,
+    budget: null,
+    deadline: null,
+    qualityWeight: null,
+    speedWeight: null,
+  });
   const messagesEndRef = useRef<HTMLDivElement>(null);
-
-  const [request, setRequest] = useState<Partial<ProcurementRequest>>({});
-  const [weights, setWeights] = useState<Partial<PriorityWeights>>({});
-  const [constraints, setConstraints] = useState<Partial<Constraints>>({});
-  const [currentQuestion, setCurrentQuestion] = useState<string>("items");
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
@@ -57,179 +80,94 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     setMessages((prev) => [...prev, newMessage]);
   };
 
-  const getNextQuestion = (): string | null => {
-    if (!request.items) return "items";
-    if (!request.location) return "location";
-    if (!request.deadline) return "deadline";
-    if (!request.budget_max) return "budget";
-    if (weights.price === undefined) return "weight_price";
-    if (weights.quality === undefined) return "weight_quality";
-    if (weights.delivery_time === undefined) return "weight_delivery";
-    if (weights.brand_reputation === undefined) return "weight_brand";
-    if (weights.sustainability === undefined) return "weight_sustainability";
-    if (constraints.min_warranty_years === undefined) return "constraint_warranty";
-    if (constraints.must_be_premium_brand === undefined) return "constraint_premium";
-    return null;
-  };
-
-  const getQuestionText = (question: string): string => {
-    const questions: Record<string, string> = {
-      items: "Great! What would you like to buy? Please include quantities if you know them.",
-      location: "Perfect! Which city should the delivery be to?",
-      deadline: "Got it. What's the latest acceptable delivery date? (e.g., 2024-03-15)",
-      budget: "Thanks! What's your maximum budget for this purchase?",
-      weight_price: "Now let's understand your priorities. On a scale from 1 to 5, how important is the price?",
-      weight_quality: "How important is quality? (1-5)",
-      weight_delivery: "How important is fast delivery? (1-5)",
-      weight_brand: "How important is brand reputation? (1-5)",
-      weight_sustainability: "How important is sustainability? (1-5)",
-      constraint_warranty: "What's the minimum warranty period you require? (in years)",
-      constraint_premium: "Do you require a premium brand? (yes/no)",
-    };
-    return questions[question] || "";
-  };
-
-  const handleSendMessage = () => {
+  const handleTextInput = () => {
     if (!inputValue.trim()) return;
 
     const userInput = inputValue.trim();
     addMessage("user", userInput);
-    
-    // Update session title on first message
-    if (messages.length === 1 && onUpdateTitle) {
+
+    // Update session title on first message if it's a real request
+    if (messages.length === 0 && onUpdateTitle && !isGreeting(userInput)) {
       const title = userInput.length > 30 ? userInput.substring(0, 30) + "..." : userInput;
       onUpdateTitle(title);
     }
-    
+
     setInputValue("");
 
-    // Process the answer
-    switch (currentQuestion) {
-      case "items":
-        setRequest((prev) => ({ ...prev, items: userInput }));
-        break;
-      case "location":
-        setRequest((prev) => ({ ...prev, location: userInput }));
-        break;
-      case "deadline":
-        setRequest((prev) => ({ ...prev, deadline: userInput }));
-        break;
-      case "budget":
-        const budget = parseFloat(userInput.replace(/[^0-9.]/g, ""));
-        if (!isNaN(budget)) {
-          setRequest((prev) => ({ ...prev, budget_max: budget }));
-        }
-        break;
-      case "weight_price":
-      case "weight_quality":
-      case "weight_delivery":
-      case "weight_brand":
-      case "weight_sustainability":
-        const weight = parseInt(userInput);
-        if (weight >= 1 && weight <= 5) {
-          const key = currentQuestion.replace("weight_", "") as keyof PriorityWeights;
-          setWeights((prev) => ({ ...prev, [key]: weight }));
-        }
-        break;
-      case "constraint_warranty":
-        const warranty = parseInt(userInput);
-        if (!isNaN(warranty)) {
-          setConstraints((prev) => ({ ...prev, min_warranty_years: warranty }));
-        }
-        break;
-      case "constraint_premium":
-        const isPremium = userInput.toLowerCase().includes("yes");
-        setConstraints((prev) => ({ ...prev, must_be_premium_brand: isPremium }));
-        break;
-    }
-
-    // Move to next question
+    // Process based on current step
     setTimeout(() => {
-      const nextQ = getNextQuestion();
-      if (nextQ) {
-        setCurrentQuestion(nextQ);
-        addMessage("assistant", getQuestionText(nextQ));
-      } else {
+      if (conversationStep === 0) {
+        // Step 0: Check for greeting vs direct request
+        if (isGreeting(userInput)) {
+          addMessage(
+            "assistant",
+            "Hello! I am Lio. To begin, please tell me what product and how many you need? (e.g., '50 Office Chairs')"
+          );
+          // Stay in step 0
+        } else {
+          // Direct request - save and move to step 1
+          setNegotiationData((prev) => ({ ...prev, productRequest: userInput }));
+          addMessage(
+            "assistant",
+            `Got it. I'll search for ${userInput}. What is your maximum budget?`
+          );
+          setConversationStep(1);
+        }
+      } else if (conversationStep === 1) {
+        // Step 1: Budget
+        setNegotiationData((prev) => ({ ...prev, budget: userInput }));
         addMessage(
           "assistant",
-          "Perfect! I have all the information I need. Click 'Run Negotiation' to find the best options for you."
+          `When do you need the ${negotiationData.productRequest} by? (e.g., 'Within 2 weeks', 'By March 15th', 'ASAP')`
         );
+        setConversationStep(2);
+      } else if (conversationStep === 2) {
+        // Step 2: Deadline
+        setNegotiationData((prev) => ({ ...prev, deadline: userInput }));
+        addMessage(
+          "assistant",
+          "On a scale of 1-5, how important is Premium Quality? (1=Basic, 5=Top Tier)"
+        );
+        setConversationStep(3);
       }
     }, 500);
   };
 
-  const handleRunNegotiation = async () => {
-    setIsLoading(true);
-
-    try {
-      const payload = {
-        request: request as ProcurementRequest,
-        weights: weights as PriorityWeights,
-        constraints: constraints as Constraints,
-      };
-
-      // For demo purposes, simulate API call with mock data
-      await new Promise((resolve) => setTimeout(resolve, 2000));
-
-      // Mock response
-      const mockOptions: VendorOption[] = [
-        {
-          label: "Best Price",
-          vendor_name: "Value Supplies Co.",
-          total_price: 53000,
-          delivery_days: 35,
-          quality_score: 0.8,
-          warranty_years: 2,
-          extras: ["installation"],
-        },
-        {
-          label: "Best Quality",
-          vendor_name: "Premium Solutions Inc.",
-          total_price: 56500,
-          delivery_days: 28,
-          quality_score: 0.95,
-          warranty_years: 3,
-          extras: ["installation", "training"],
-        },
-        {
-          label: "Fastest Delivery",
-          vendor_name: "Express Vendors Ltd.",
-          total_price: 54800,
-          delivery_days: 14,
-          quality_score: 0.85,
-          warranty_years: 2,
-          extras: ["installation", "24/7 support"],
-        },
-        {
-          label: "Balanced (AI Recommended)",
-          vendor_name: "Smart Choice Partners",
-          total_price: 54200,
-          delivery_days: 21,
-          quality_score: 0.88,
-          warranty_years: 3,
-          extras: ["installation", "training", "maintenance"],
-        },
-      ];
-
-      onComplete(mockOptions);
+  const handleRatingSelect = (rating: number, type: "quality" | "speed") => {
+    if (type === "quality") {
+      // Step 3: Quality rating
+      setNegotiationData((prev) => ({ ...prev, qualityWeight: rating }));
+      addMessage("user", rating.toString());
+      setTimeout(() => {
+        addMessage("assistant", "And how important is Fast Delivery?");
+        setConversationStep(4);
+      }, 500);
+    } else {
+      // Step 4: Speed rating - final step
+      const finalData = { ...negotiationData, speedWeight: rating };
+      setNegotiationData(finalData);
+      addMessage("user", rating.toString());
       
-      toast({
-        title: "Negotiation Complete",
-        description: "Found 4 optimized vendor options for you.",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to run negotiation. Please try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsLoading(false);
+      setTimeout(() => {
+        console.log("Negotiation Data:", finalData);
+        setConversationStep("complete");
+      }, 500);
     }
   };
 
-  const isComplete = getNextQuestion() === null;
-  const isInitialState = messages.length === 1;
+  const isInitialState = messages.length === 0;
+
+  // Complete State: Loading Card
+  if (conversationStep === "complete") {
+    return (
+      <div className="flex items-center justify-center min-h-[calc(100vh-240px)]">
+        <Card className="p-8 text-center max-w-md">
+          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+          <p className="text-lg">I will get back to you when the right vendors were found...</p>
+        </Card>
+      </div>
+    );
+  }
 
   // Initial State: Centered search-like interface
   if (isInitialState) {
@@ -247,15 +185,14 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
             <Input
               value={inputValue}
               onChange={(e) => setInputValue(e.target.value)}
-              onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+              onKeyPress={(e) => e.key === "Enter" && handleTextInput()}
               placeholder="What would you like to procure today?"
               className="flex-1 h-14 text-base px-6 rounded-full shadow-sm"
-              disabled={isLoading}
               autoFocus
             />
-            <Button 
-              onClick={handleSendMessage} 
-              disabled={isLoading || !inputValue.trim()}
+            <Button
+              onClick={handleTextInput}
+              disabled={!inputValue.trim()}
               size="lg"
               className="h-14 px-6 rounded-full"
             >
@@ -281,36 +218,29 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
 
         {/* Input Area */}
         <div className="border-t border-border bg-muted/30 p-4">
-          {!isComplete ? (
+          {conversationStep === 3 ? (
+            <div>
+              <p className="text-center text-sm text-muted-foreground mb-2">Select a rating:</p>
+              <RatingButtons onSelect={(rating) => handleRatingSelect(rating, "quality")} />
+            </div>
+          ) : conversationStep === 4 ? (
+            <div>
+              <p className="text-center text-sm text-muted-foreground mb-2">Select a rating:</p>
+              <RatingButtons onSelect={(rating) => handleRatingSelect(rating, "speed")} />
+            </div>
+          ) : (
             <div className="flex gap-2">
               <Input
                 value={inputValue}
                 onChange={(e) => setInputValue(e.target.value)}
-                onKeyPress={(e) => e.key === "Enter" && handleSendMessage()}
+                onKeyPress={(e) => e.key === "Enter" && handleTextInput()}
                 placeholder="Type your answer..."
                 className="flex-1"
-                disabled={isLoading}
               />
-              <Button onClick={handleSendMessage} disabled={isLoading || !inputValue.trim()}>
+              <Button onClick={handleTextInput} disabled={!inputValue.trim()}>
                 <Send className="h-4 w-4" />
               </Button>
             </div>
-          ) : (
-            <Button
-              onClick={handleRunNegotiation}
-              disabled={isLoading}
-              className="w-full"
-              size="lg"
-            >
-              {isLoading ? (
-                <>
-                  <Loader2 className="mr-2 h-5 w-5 animate-spin" />
-                  Running AI Negotiation...
-                </>
-              ) : (
-                "Run Negotiation"
-              )}
-            </Button>
           )}
         </div>
       </div>
