@@ -2,7 +2,7 @@ import { useState } from "react";
 import { ChatIntake } from "@/components/ChatIntake";
 import { ResultsView } from "@/components/ResultsView";
 import { Sidebar } from "@/components/Sidebar";
-import { Moon, FileText, MessageSquare } from "lucide-react";
+import { Moon, FileText, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import askLioLogo from "@/assets/asklio-logo.png";
 import { toast } from "sonner";
@@ -138,7 +138,6 @@ const Index = () => {
         onNewRequest={handleNewRequest}
         onSelectSession={handleSelectSession}
         onRenameSession={handleRenameSession}
-        onLogout={handleLogout}
       />
 
       {/* Right Main Content Area */}
@@ -168,6 +167,14 @@ const Index = () => {
                   <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
                     <FileText className="h-4 w-4 mr-2" />
                     API Docs
+                  </Button>
+                  <Button
+                    onClick={handleLogout}
+                    variant="outline"
+                    className="border-border bg-background hover:bg-accent"
+                  >
+                    <LogOut className="h-4 w-4 mr-2" />
+                    Logout
                   </Button>
                 </div>
               </div>
