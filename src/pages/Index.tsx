@@ -119,6 +119,16 @@ const Index = () => {
     );
   };
 
+  const handleRenameSession = (sessionId: string, newTitle: string) => {
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === sessionId
+          ? { ...session, title: newTitle }
+          : session
+      )
+    );
+  };
+
   return (
     <div className="flex h-screen w-full overflow-hidden bg-background">
       {/* Left Sidebar */}
@@ -127,6 +137,7 @@ const Index = () => {
         activeSessionId={activeSessionId}
         onNewRequest={handleNewRequest}
         onSelectSession={handleSelectSession}
+        onRenameSession={handleRenameSession}
         onLogout={handleLogout}
       />
 
