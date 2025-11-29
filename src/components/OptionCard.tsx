@@ -1,13 +1,6 @@
 import { cn } from "@/lib/utils";
 import { Badge } from "@/components/ui/badge";
-import { 
-  DollarSign, 
-  Clock, 
-  Award, 
-  Shield, 
-  Sparkles,
-  Check
-} from "lucide-react";
+import { DollarSign, Clock, Award, Shield, Sparkles, Check } from "lucide-react";
 import type { VendorOption } from "@/pages/Index";
 
 interface OptionCardProps {
@@ -18,8 +11,6 @@ interface OptionCardProps {
 
 export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => {
   const isRecommended = option.label.includes("Recommended");
-  const isRecommended = (option ?? []).includes(option.)
-
   return (
     <button
       onClick={onClick}
@@ -28,7 +19,7 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
         isSelected
           ? "border-primary ring-4 ring-primary/20 shadow-lg shadow-primary/20"
           : "border-border hover:border-primary/30",
-        isRecommended && "border-primary/20"
+        isRecommended && "border-primary/20",
       )}
     >
       {/* Selected Indicator */}
@@ -62,9 +53,7 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Total Price</p>
-            <p className="text-lg font-bold text-foreground">
-              ${option.total_price.toLocaleString()}
-            </p>
+            <p className="text-lg font-bold text-foreground">${option.total_price.toLocaleString()}</p>
           </div>
         </div>
 
@@ -74,9 +63,7 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Delivery Time</p>
-            <p className="text-sm font-semibold text-foreground">
-              {option.delivery_days} days
-            </p>
+            <p className="text-sm font-semibold text-foreground">{option.delivery_days} days</p>
           </div>
         </div>
 
@@ -86,9 +73,7 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
           </div>
           <div>
             <p className="text-xs text-muted-foreground">Quality Score</p>
-            <p className="text-sm font-semibold text-foreground">
-              {(option.quality_score * 100).toFixed(0)}%
-            </p>
+            <p className="text-sm font-semibold text-foreground">{(option.quality_score * 100).toFixed(0)}%</p>
           </div>
         </div>
 
@@ -111,11 +96,7 @@ export const OptionCard = ({ option, isSelected, onClick }: OptionCardProps) => 
           <p className="text-xs font-medium text-muted-foreground mb-2">Included</p>
           <div className="flex flex-wrap gap-2">
             {option.extras.map((extra) => (
-              <Badge
-                key={extra}
-                variant="secondary"
-                className="text-xs capitalize"
-              >
+              <Badge key={extra} variant="secondary" className="text-xs capitalize">
                 {extra}
               </Badge>
             ))}
