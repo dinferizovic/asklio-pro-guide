@@ -34,9 +34,9 @@ interface ChatIntakeProps {
   onUpdateTitle?: (title: string) => void;
 }
 
-const OPENAI_API_KEY =
-  "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";
-const OPENAI_MODEL = process.env.NEXT_PUBLIC_OPENAI_MODEL ?? "gpt-4.1-mini";
+// TODO: Move to backend edge function for security
+const OPENAI_API_KEY = "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";
+const OPENAI_MODEL = "gpt-4.1-mini";
 
 const isGreeting = (text: string): boolean => {
   const greetings = ["hi", "hello", "hey", "start", "help", "yo", "sup"];
