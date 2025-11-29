@@ -154,7 +154,7 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     setTimeout(() => {
       if (isPhysical) {
         // Ask for delivery location
-        addMessage("assistant", `Where should the ${negotiationData.productRequest} be delivered to? (e.g., 'New York, NY', '123 Main St, Chicago')`);
+        addMessage("assistant", `Where should the request be delivered to? (e.g., 'Munich')`);
         setConversationStep(2);
       } else {
         // Skip location, go straight to budget
