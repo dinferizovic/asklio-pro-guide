@@ -14,13 +14,15 @@ interface Message {
 
 interface NegotiationData {
   productRequest: string | null;
+  isPhysicalProduct: boolean | null;
+  deliveryLocation: string | null;
   budget: string | null;
   deadline: string | null;
   qualityWeight: number | null;
   speedWeight: number | null;
 }
 
-type ConversationStep = 0 | 1 | 2 | 3 | 4 | "complete";
+type ConversationStep = 0 | 1 | 2 | 3 | 4 | 5 | 6 | "complete";
 
 interface ChatIntakeProps {
   onComplete: (options: any[]) => void;
@@ -49,12 +51,25 @@ const RatingButtons = ({ onSelect }: { onSelect: (rating: number) => void }) => 
   </div>
 );
 
+const YesNoButtons = ({ onSelect }: { onSelect: (value: boolean) => void }) => (
+  <div className="flex gap-4 justify-center py-4">
+    <Button onClick={() => onSelect(true)} variant="outline" size="lg" className="px-8">
+      Yes
+    </Button>
+    <Button onClick={() => onSelect(false)} variant="outline" size="lg" className="px-8">
+      No
+    </Button>
+  </div>
+);
+
 export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [conversationStep, setConversationStep] = useState<ConversationStep>(0);
   const [negotiationData, setNegotiationData] = useState<NegotiationData>({
     productRequest: null,
+    isPhysicalProduct: null,
+    deliveryLocation: null,
     budget: null,
     deadline: null,
     qualityWeight: null,
@@ -107,21 +122,43 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
         } else {
           // Direct request - save and move to step 1
           setNegotiationData((prev) => ({ ...prev, productRequest: userInput }));
-          addMessage("assistant", `Got it. I'll search for ${userInput}. What is your maximum budget?`);
+          addMessage("assistant", "Is this a physical product that requires delivery?");
           setConversationStep(1);
         }
-      } else if (conversationStep === 1) {
-        // Step 1: Budget
+      } else if (conversationStep === 2) {
+        // Step 2: Delivery location (only reached if physical product)
+        setNegotiationData((prev) => ({ ...prev, deliveryLocation: userInput }));
+        addMessage("assistant", "What is your maximum budget?");
+        setConversationStep(3);
+      } else if (conversationStep === 3) {
+        // Step 3: Budget
         setNegotiationData((prev) => ({ ...prev, budget: userInput }));
         addMessage(
           "assistant",
           `When do you need the ${negotiationData.productRequest} by? (e.g., 'Within 2 weeks', 'By March 15th', 'ASAP')`,
         );
-        setConversationStep(2);
-      } else if (conversationStep === 2) {
-        // Step 2: Deadline
+        setConversationStep(4);
+      } else if (conversationStep === 4) {
+        // Step 4: Deadline
         setNegotiationData((prev) => ({ ...prev, deadline: userInput }));
         addMessage("assistant", "On a scale of 1-5, how important is Premium Quality? (1=Basic, 5=Top Tier)");
+        setConversationStep(5);
+      }
+    }, 500);
+  };
+
+  const handlePhysicalProductSelect = (isPhysical: boolean) => {
+    setNegotiationData((prev) => ({ ...prev, isPhysicalProduct: isPhysical }));
+    addMessage("user", isPhysical ? "Yes" : "No");
+
+    setTimeout(() => {
+      if (isPhysical) {
+        // Ask for delivery location
+        addMessage("assistant", `Where should the ${negotiationData.productRequest} be delivered to? (e.g., 'New York, NY', '123 Main St, Chicago')`);
+        setConversationStep(2);
+      } else {
+        // Skip location, go straight to budget
+        addMessage("assistant", "What is your maximum budget?");
         setConversationStep(3);
       }
     }, 500);
@@ -129,15 +166,15 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
 
   const handleRatingSelect = (rating: number, type: "quality" | "speed") => {
     if (type === "quality") {
-      // Step 3: Quality rating
+      // Step 5: Quality rating
       setNegotiationData((prev) => ({ ...prev, qualityWeight: rating }));
       addMessage("user", rating.toString());
       setTimeout(() => {
         addMessage("assistant", "And how important is Fast Delivery?");
-        setConversationStep(4);
+        setConversationStep(6);
       }, 500);
     } else {
-      // Step 4: Speed rating - final step
+      // Step 6: Speed rating - final step
       const finalData = { ...negotiationData, speedWeight: rating };
       setNegotiationData(finalData);
       addMessage("user", rating.toString());
@@ -212,12 +249,17 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
 
         {/* Input Area */}
         <div className="border-t border-border bg-muted/30 p-4">
-          {conversationStep === 3 ? (
+          {conversationStep === 1 ? (
+            <div>
+              <p className="text-center text-sm text-muted-foreground mb-2">Please select:</p>
+              <YesNoButtons onSelect={handlePhysicalProductSelect} />
+            </div>
+          ) : conversationStep === 5 ? (
             <div>
               <p className="text-center text-sm text-muted-foreground mb-2">Select a rating:</p>
               <RatingButtons onSelect={(rating) => handleRatingSelect(rating, "quality")} />
             </div>
-          ) : conversationStep === 4 ? (
+          ) : conversationStep === 6 ? (
             <div>
               <p className="text-center text-sm text-muted-foreground mb-2">Select a rating:</p>
               <RatingButtons onSelect={(rating) => handleRatingSelect(rating, "speed")} />
