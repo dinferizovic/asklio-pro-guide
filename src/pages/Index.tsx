@@ -3,6 +3,7 @@ import { ChatIntake } from "@/components/ChatIntake";
 import { ResultsView } from "@/components/ResultsView";
 import { Moon, LogOut, FileText, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import askLioLogo from "@/assets/asklio-logo.png";
 
 export interface ProcurementRequest {
   items: string;
@@ -58,20 +59,15 @@ const Index = () => {
         <div className="border-b border-border">
           <div className="container mx-auto px-6 py-3">
             <div className="flex items-center justify-between">
-              {/* Left: Logo and Team */}
+              {/* Left: Logo and Branding */}
               <div className="flex items-center gap-3">
-                {/* Logo/Icon */}
-                <div className="h-10 w-10 rounded-lg bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center">
-                  <div className="h-6 w-6 rounded-full bg-white/20"></div>
-                </div>
-                <div>
-                  <h1 className="text-lg font-bold">
-                    <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
-                    {" "}
-                    <span className="text-foreground">Hackathon</span>
-                  </h1>
-                  <p className="text-xs text-muted-foreground">Team: hacker_team_7</p>
-                </div>
+                {/* Logo */}
+                <img src={askLioLogo} alt="askLio" className="h-12 w-12" />
+                <h1 className="text-xl font-bold">
+                  <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
+                  {" "}
+                  <span className="text-foreground">Hackathon</span>
+                </h1>
               </div>
 
               {/* Right: Actions */}
