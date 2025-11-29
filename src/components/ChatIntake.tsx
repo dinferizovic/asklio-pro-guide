@@ -16,11 +16,12 @@ interface Message {
 
 interface ChatIntakeProps {
   onComplete: (options: VendorOption[]) => void;
+  onUpdateTitle?: (title: string) => void;
 }
 
 const WEBHOOK_URL = "https://example.com/webhook/procurement/negotiate";
 
-export const ChatIntake = ({ onComplete }: ChatIntakeProps) => {
+export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   const [messages, setMessages] = useState<Message[]>([
     {
       id: "1",
@@ -91,8 +92,15 @@ export const ChatIntake = ({ onComplete }: ChatIntakeProps) => {
   const handleSendMessage = () => {
     if (!inputValue.trim()) return;
 
-    addMessage("user", inputValue);
     const userInput = inputValue.trim();
+    addMessage("user", userInput);
+    
+    // Update session title on first message
+    if (messages.length === 1 && onUpdateTitle) {
+      const title = userInput.length > 30 ? userInput.substring(0, 30) + "..." : userInput;
+      onUpdateTitle(title);
+    }
+    
     setInputValue("");
 
     // Process the answer

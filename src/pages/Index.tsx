@@ -1,9 +1,11 @@
 import { useState } from "react";
 import { ChatIntake } from "@/components/ChatIntake";
 import { ResultsView } from "@/components/ResultsView";
-import { Moon, LogOut, FileText, MessageSquare } from "lucide-react";
+import { Sidebar } from "@/components/Sidebar";
+import { Moon, FileText, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import askLioLogo from "@/assets/asklio-logo.png";
+import { toast } from "sonner";
 
 export interface ProcurementRequest {
   items: string;
@@ -35,88 +37,178 @@ export interface VendorOption {
   extras: string[];
 }
 
+interface Session {
+  id: string;
+  title: string;
+  mode: "intake" | "results";
+  options: VendorOption[];
+  selectedOption: VendorOption | null;
+}
+
 const Index = () => {
-  const [mode, setMode] = useState<"intake" | "results">("intake");
-  const [options, setOptions] = useState<VendorOption[]>([]);
-  const [selectedOption, setSelectedOption] = useState<VendorOption | null>(null);
+  const initialSessionId = `session-${Date.now()}`;
+  const [sessions, setSessions] = useState<Session[]>([{
+    id: initialSessionId,
+    title: "New Request",
+    mode: "intake",
+    options: [],
+    selectedOption: null,
+  }]);
+  const [activeSessionId, setActiveSessionId] = useState<string | null>(initialSessionId);
+
+  const activeSession = sessions.find((s) => s.id === activeSessionId);
+
+  const handleNewRequest = () => {
+    const newSessionId = `session-${Date.now()}`;
+    const newSession: Session = {
+      id: newSessionId,
+      title: "New Request",
+      mode: "intake",
+      options: [],
+      selectedOption: null,
+    };
+    setSessions((prev) => [newSession, ...prev]);
+    setActiveSessionId(newSessionId);
+  };
+
+  const handleSelectSession = (sessionId: string) => {
+    setActiveSessionId(sessionId);
+  };
 
   const handleNegotiationComplete = (results: VendorOption[]) => {
-    setOptions(results);
-    setMode("results");
+    if (!activeSessionId) return;
+    
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === activeSessionId
+          ? { ...session, mode: "results" as const, options: results }
+          : session
+      )
+    );
   };
 
   const handleReset = () => {
-    setMode("intake");
-    setOptions([]);
-    setSelectedOption(null);
+    handleNewRequest();
+  };
+
+  const handleSelectOption = (option: VendorOption) => {
+    if (!activeSessionId) return;
+    
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === activeSessionId
+          ? { ...session, selectedOption: option }
+          : session
+      )
+    );
+  };
+
+  const handleLogout = () => {
+    toast.success("Logged out successfully");
+  };
+
+  const updateSessionTitle = (title: string) => {
+    if (!activeSessionId) return;
+    
+    setSessions((prev) =>
+      prev.map((session) =>
+        session.id === activeSessionId
+          ? { ...session, title }
+          : session
+      )
+    );
   };
 
   return (
-    <div className="min-h-screen bg-background">
-      {/* Dashboard Header */}
-      <header className="border-b border-border bg-card shadow-sm">
-        {/* Top Row: Logo/Branding + Actions */}
-        <div className="border-b border-border">
-          <div className="container mx-auto px-6 py-3">
-            <div className="flex items-center justify-between">
-              {/* Left: Logo and Branding */}
-              <div className="flex items-center gap-3">
-                {/* Logo */}
-                <img src={askLioLogo} alt="askLio" className="h-10 w-auto object-contain" />
-                <h1 className="text-xl font-bold">
-                  <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
-                  {" "}
-                  <span className="text-foreground">Hackathon</span>
-                </h1>
-              </div>
+    <div className="flex h-screen w-full overflow-hidden bg-background">
+      {/* Left Sidebar */}
+      <Sidebar
+        sessions={sessions.map((s) => ({ id: s.id, title: s.title, status: s.mode }))}
+        activeSessionId={activeSessionId}
+        onNewRequest={handleNewRequest}
+        onSelectSession={handleSelectSession}
+        onLogout={handleLogout}
+      />
 
-              {/* Right: Actions */}
-              <div className="flex items-center gap-3">
-                <button className="p-2 hover:bg-accent rounded-lg transition-colors">
-                  <Moon className="h-5 w-5 text-muted-foreground" />
-                </button>
-                <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                  <FileText className="h-4 w-4 mr-2" />
-                  API Docs
-                </Button>
-                <Button variant="outline" className="border-border bg-background hover:bg-accent">
-                  <LogOut className="h-4 w-4 mr-2" />
-                  Logout
-                </Button>
+      {/* Right Main Content Area */}
+      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-white">
+        {/* Dashboard Header */}
+        <header className="border-b border-border bg-card shadow-sm shrink-0">
+          {/* Top Row: Logo/Branding + Actions */}
+          <div className="border-b border-border">
+            <div className="px-6 py-3">
+              <div className="flex items-center justify-between">
+                {/* Left: Logo and Branding */}
+                <div className="flex items-center gap-3">
+                  {/* Logo */}
+                  <img src={askLioLogo} alt="askLio" className="h-10 w-auto object-contain" />
+                  <h1 className="text-xl font-bold">
+                    <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
+                    {" "}
+                    <span className="text-foreground">Hackathon</span>
+                  </h1>
+                </div>
+
+                {/* Right: Actions */}
+                <div className="flex items-center gap-3">
+                  <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+                    <Moon className="h-5 w-5 text-muted-foreground" />
+                  </button>
+                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+                    <FileText className="h-4 w-4 mr-2" />
+                    API Docs
+                  </Button>
+                </div>
               </div>
             </div>
           </div>
-        </div>
 
-        {/* Bottom Row: Navigation Tabs */}
-        <div className="container mx-auto px-6">
-          <nav className="flex items-center gap-8">
-            <button className="flex items-center gap-2 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">
-              <FileText className="h-4 w-4" />
-              Hackathon Materials
-            </button>
-            <button className="relative flex items-center gap-2 py-3 text-sm font-semibold text-foreground">
-              <MessageSquare className="h-4 w-4" />
-              LioAnswers
-              <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></span>
-            </button>
-          </nav>
-        </div>
-      </header>
+          {/* Bottom Row: Navigation Tabs */}
+          <div className="px-6">
+            <nav className="flex items-center gap-8">
+              <button className="flex items-center gap-2 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">
+                <FileText className="h-4 w-4" />
+                Hackathon Materials
+              </button>
+              <button className="relative flex items-center gap-2 py-3 text-sm font-semibold text-foreground">
+                <MessageSquare className="h-4 w-4" />
+                LioAnswers
+                <span className="absolute bottom-0 left-0 right-0 h-0.5 bg-primary"></span>
+              </button>
+            </nav>
+          </div>
+        </header>
 
-      {/* Main Content - Direct on Background */}
-      <main className="container mx-auto px-6 py-8">
-        {mode === "intake" ? (
-          <ChatIntake onComplete={handleNegotiationComplete} />
-        ) : (
-          <ResultsView
-            options={options}
-            selectedOption={selectedOption}
-            onSelectOption={setSelectedOption}
-            onReset={handleReset}
-          />
-        )}
-      </main>
+        {/* Main Content - Centered and Constrained */}
+        <main className="flex-1 overflow-y-auto bg-background">
+          <div className="max-w-[800px] mx-auto px-6 py-8">
+            {!activeSession ? (
+              <div className="flex items-center justify-center h-full">
+                <div className="text-center">
+                  <h2 className="text-2xl font-bold text-muted-foreground mb-2">
+                    Select a negotiation or start a new request
+                  </h2>
+                  <p className="text-muted-foreground">
+                    Click "+ New Request" in the sidebar to begin
+                  </p>
+                </div>
+              </div>
+            ) : activeSession.mode === "intake" ? (
+              <ChatIntake
+                onComplete={handleNegotiationComplete}
+                onUpdateTitle={updateSessionTitle}
+              />
+            ) : (
+              <ResultsView
+                options={activeSession.options}
+                selectedOption={activeSession.selectedOption}
+                onSelectOption={handleSelectOption}
+                onReset={handleReset}
+              />
+            )}
+          </div>
+        </main>
+      </div>
     </div>
   );
 };
