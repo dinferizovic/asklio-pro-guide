@@ -55,7 +55,7 @@ export const Sidebar = ({
   };
 
   return (
-    <div className="w-[260px] h-screen bg-[#F9FAFB] border-r border-border flex flex-col">
+    <div className="w-[260px] h-full bg-[#F9FAFB] border-r border-border flex flex-col">
       {/* Top Section - New Request Button */}
       <div className="p-4">
         <Button

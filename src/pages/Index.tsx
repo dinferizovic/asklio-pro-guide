@@ -130,59 +130,56 @@ const Index = () => {
   };
 
   return (
-    <div className="flex h-screen w-full overflow-hidden bg-background">
-      {/* Left Sidebar */}
-      <Sidebar
-        sessions={sessions.map((s) => ({ id: s.id, title: s.title, status: s.mode }))}
-        activeSessionId={activeSessionId}
-        onNewRequest={handleNewRequest}
-        onSelectSession={handleSelectSession}
-        onRenameSession={handleRenameSession}
-      />
-
-      {/* Right Main Content Area */}
-      <div className="flex-1 flex flex-col h-screen overflow-hidden bg-white">
-        {/* Dashboard Header */}
-        <header className="border-b border-border bg-card shadow-sm shrink-0">
-          {/* Top Row: Logo/Branding + Actions */}
-          <div className="border-b border-border">
-            <div className="px-6 py-3">
-              <div className="flex items-center justify-between">
-                {/* Left: Logo and Branding */}
-                <div className="flex items-center gap-3">
-                  {/* Logo */}
-                  <img src={askLioLogo} alt="askLio" className="h-10 w-auto object-contain" />
-                  <h1 className="text-xl font-bold">
-                    <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
-                    {" "}
-                    <span className="text-foreground">Hackathon</span>
-                  </h1>
-                </div>
-
-                {/* Right: Actions */}
-                <div className="flex items-center gap-3">
-                  <button className="p-2 hover:bg-accent rounded-lg transition-colors">
-                    <Moon className="h-5 w-5 text-muted-foreground" />
-                  </button>
-                  <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
-                    <FileText className="h-4 w-4 mr-2" />
-                    API Docs
-                  </Button>
-                  <Button
-                    onClick={handleLogout}
-                    variant="outline"
-                    className="border-border bg-background hover:bg-accent"
-                  >
-                    <LogOut className="h-4 w-4 mr-2" />
-                    Logout
-                  </Button>
-                </div>
-              </div>
-            </div>
+    <div className="flex flex-col h-screen w-full overflow-hidden bg-background">
+      {/* Full-Width Top Header */}
+      <header className="w-full border-b border-border bg-card shadow-sm shrink-0 h-16">
+        <div className="h-full px-6 flex items-center justify-between">
+          {/* Left: Logo and Branding */}
+          <div className="flex items-center gap-3">
+            <img src={askLioLogo} alt="askLio" className="h-8 w-auto object-contain" />
+            <h1 className="text-xl font-bold">
+              <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
+              {" "}
+              <span className="text-foreground">Hackathon</span>
+            </h1>
           </div>
 
-          {/* Bottom Row: Navigation Tabs */}
-          <div className="px-6">
+          {/* Right: Actions */}
+          <div className="flex items-center gap-3">
+            <button className="p-2 hover:bg-accent rounded-lg transition-colors">
+              <Moon className="h-5 w-5 text-muted-foreground" />
+            </button>
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              <FileText className="h-4 w-4 mr-2" />
+              API Docs
+            </Button>
+            <Button
+              onClick={handleLogout}
+              variant="outline"
+              className="border-border bg-background hover:bg-accent"
+            >
+              <LogOut className="h-4 w-4 mr-2" />
+              Logout
+            </Button>
+          </div>
+        </div>
+      </header>
+
+      {/* Bottom: Sidebar + Main Content */}
+      <div className="flex flex-row flex-1 overflow-hidden">
+        {/* Left Sidebar */}
+        <Sidebar
+          sessions={sessions.map((s) => ({ id: s.id, title: s.title, status: s.mode }))}
+          activeSessionId={activeSessionId}
+          onNewRequest={handleNewRequest}
+          onSelectSession={handleSelectSession}
+          onRenameSession={handleRenameSession}
+        />
+
+        {/* Right Main Content Area */}
+        <div className="flex-1 flex flex-col overflow-hidden bg-white">
+          {/* Navigation Tabs */}
+          <div className="px-6 border-b border-border bg-card shrink-0">
             <nav className="flex items-center gap-8">
               <button className="flex items-center gap-2 py-3 text-sm text-muted-foreground hover:text-foreground transition-colors">
                 <FileText className="h-4 w-4" />
@@ -195,37 +192,37 @@ const Index = () => {
               </button>
             </nav>
           </div>
-        </header>
 
-        {/* Main Content - Centered and Constrained */}
-        <main className="flex-1 overflow-y-auto bg-background">
-          <div className="max-w-[800px] mx-auto px-6 py-8">
-            {!activeSession ? (
-              <div className="flex items-center justify-center h-full">
-                <div className="text-center">
-                  <h2 className="text-2xl font-bold text-muted-foreground mb-2">
-                    Select a negotiation or start a new request
-                  </h2>
-                  <p className="text-muted-foreground">
-                    Click "+ New Request" in the sidebar to begin
-                  </p>
+          {/* Main Content - Centered and Constrained */}
+          <main className="flex-1 overflow-y-auto bg-background">
+            <div className="max-w-[800px] mx-auto px-6 py-8">
+              {!activeSession ? (
+                <div className="flex items-center justify-center h-full">
+                  <div className="text-center">
+                    <h2 className="text-2xl font-bold text-muted-foreground mb-2">
+                      Select a negotiation or start a new request
+                    </h2>
+                    <p className="text-muted-foreground">
+                      Click "+ New Request" in the sidebar to begin
+                    </p>
+                  </div>
                 </div>
-              </div>
-            ) : activeSession.mode === "intake" ? (
-              <ChatIntake
-                onComplete={handleNegotiationComplete}
-                onUpdateTitle={updateSessionTitle}
-              />
-            ) : (
-              <ResultsView
-                options={activeSession.options}
-                selectedOption={activeSession.selectedOption}
-                onSelectOption={handleSelectOption}
-                onReset={handleReset}
-              />
-            )}
-          </div>
-        </main>
+              ) : activeSession.mode === "intake" ? (
+                <ChatIntake
+                  onComplete={handleNegotiationComplete}
+                  onUpdateTitle={updateSessionTitle}
+                />
+              ) : (
+                <ResultsView
+                  options={activeSession.options}
+                  selectedOption={activeSession.selectedOption}
+                  onSelectOption={handleSelectOption}
+                  onReset={handleReset}
+                />
+              )}
+            </div>
+          </main>
+        </div>
       </div>
     </div>
   );
