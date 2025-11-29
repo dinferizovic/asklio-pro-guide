@@ -40,7 +40,8 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   }, [messages]);
 
   const callOpenAI = async (chatMessages: Message[]) => {
-    const apiKey =“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";
+    const apiKey =
+      "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";
     if (!apiKey) {
       console.error("NEXT_PUBLIC_OPENAI_API_KEY is missing.");
       setMessages((prev) => [
