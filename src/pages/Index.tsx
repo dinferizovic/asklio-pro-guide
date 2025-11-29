@@ -151,7 +151,7 @@ const Index = () => {
                 {/* Left: Logo and Branding */}
                 <div className="flex items-center gap-3">
                   {/* Logo */}
-                  <img src={askLioLogo} alt="askLio" className="h-12 w-12 object-contain" />
+                  <img src={askLioLogo} alt="askLio" className="h-10 w-auto object-contain" />
                   <h1 className="text-xl font-bold">
                     <span className="bg-gradient-to-r from-primary to-blue-600 bg-clip-text text-transparent">askLio</span>
                     {" "}

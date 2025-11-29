@@ -3,7 +3,6 @@ import { Plus, Edit2, Check, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Input } from "@/components/ui/input";
-import sidebarLogo from "@/assets/sidebar-logo.png";
 
 interface Session {
   id: string;
@@ -57,11 +56,6 @@ export const Sidebar = ({
 
   return (
     <div className="w-[260px] h-screen bg-[#F9FAFB] border-r border-border flex flex-col">
-      {/* Logo Header Section */}
-      <div className="p-4 border-b border-border flex items-center justify-center">
-        <img src={sidebarLogo} alt="askLio" className="h-8 w-auto object-contain" />
-      </div>
-
       {/* Top Section - New Request Button */}
       <div className="p-4">
         <Button
