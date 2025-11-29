@@ -272,15 +272,11 @@ Additional style:
 
       if (assistantMessageText === "All information is successfully gathered." && !intakeComplete) {
         setIntakeComplete(true);
-
-        // At this moment you can call your backend from the parent.
-        // We pass the final intakeData structure to onComplete so the parent can do:
-        // fetch("/your-backend", { method: "POST", body: JSON.stringify(intakeData) })
-        try {
-          onComplete([updatedData]);
-        } catch {
-          // Parent may choose to ignore this callback.
-        }
+        // Log the final intake data for debugging/verification
+        console.log("Intake complete. Final data:", updatedData);
+        // NOTE: Not calling onComplete here because the backend integration
+        // to fetch vendor options is not yet implemented. The loading state
+        // will be shown instead.
       }
     } catch (error) {
       console.error("Error calling OpenAI:", error);
