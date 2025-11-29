@@ -89,21 +89,36 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   }, [messages]);
 
   // --- OpenAI 호출 ---
+  // 컴포넌트 내부에 있던 기존 callOpenAI 대신 이걸로 교체
   async function callOpenAI(chatMessages: Message[]) {
     try {
       setIsLoading(true);
 
-      const res = await fetch("/api/chat", {
+      const apiKey = process.env.NEXT_PUBLIC_OPENAI_API_KEY;
+      if (!apiKey) {
+        console.error("Missing NEXT_PUBLIC_OPENAI_API_KEY");
+        return;
+      }
+
+      const res = await fetch("https://api.openai.com/v1/chat/completions", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
+          Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-          // 서버에는 role / content 만 전달
-          messages: chatMessages.map((m) => ({
-            role: m.role,
-            content: m.content,
-          })),
+          model: "gpt-4o", // 원하면 다른 모델로 변경 가능
+          messages: [
+            {
+              role: "system",
+              content:
+                "You are LioAnswers, an AI assistant that helps with procurement and negotiation. Be concise and helpful.",
+            },
+            ...chatMessages.map((m) => ({
+              role: m.role, // "user" | "assistant"
+              content: m.content,
+            })),
+          ],
         }),
       });
 
@@ -112,12 +127,13 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
         return;
       }
 
-      const data: { reply: string } = await res.json();
+      const data = await res.json();
+      const replyText: string = data.choices?.[0]?.message?.content ?? "";
 
       const assistantMessage: Message = {
         id: Date.now().toString(),
         role: "assistant",
-        content: data.reply,
+        content: replyText,
         timestamp: new Date(),
       };
 
