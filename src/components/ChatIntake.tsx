@@ -30,7 +30,7 @@ interface ChatIntakeProps {
 const isGreeting = (text: string): boolean => {
   const greetings = ["hi", "hello", "hey", "start", "help", "yo", "sup"];
   const normalized = text.toLowerCase().trim();
-  return normalized.length < 15 || greetings.some(g => normalized === g || normalized.startsWith(g + " "));
+  return normalized.length < 15 || greetings.some((g) => normalized === g || normalized.startsWith(g + " "));
 };
 
 const RatingButtons = ({ onSelect }: { onSelect: (rating: number) => void }) => (
@@ -101,16 +101,13 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
         if (isGreeting(userInput)) {
           addMessage(
             "assistant",
-            "Hello! I am Lio. To begin, please tell me what product and how many you need? (e.g., '50 Office Chairs')"
+            "Hi! To begin, please tell me what product and how many you need? (e.g., '50 Office Chairs')",
           );
           // Stay in step 0
         } else {
           // Direct request - save and move to step 1
           setNegotiationData((prev) => ({ ...prev, productRequest: userInput }));
-          addMessage(
-            "assistant",
-            `Got it. I'll search for ${userInput}. What is your maximum budget?`
-          );
+          addMessage("assistant", `Got it. I'll search for ${userInput}. What is your maximum budget?`);
           setConversationStep(1);
         }
       } else if (conversationStep === 1) {
@@ -118,16 +115,13 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
         setNegotiationData((prev) => ({ ...prev, budget: userInput }));
         addMessage(
           "assistant",
-          `When do you need the ${negotiationData.productRequest} by? (e.g., 'Within 2 weeks', 'By March 15th', 'ASAP')`
+          `When do you need the ${negotiationData.productRequest} by? (e.g., 'Within 2 weeks', 'By March 15th', 'ASAP')`,
         );
         setConversationStep(2);
       } else if (conversationStep === 2) {
         // Step 2: Deadline
         setNegotiationData((prev) => ({ ...prev, deadline: userInput }));
-        addMessage(
-          "assistant",
-          "On a scale of 1-5, how important is Premium Quality? (1=Basic, 5=Top Tier)"
-        );
+        addMessage("assistant", "On a scale of 1-5, how important is Premium Quality? (1=Basic, 5=Top Tier)");
         setConversationStep(3);
       }
     }, 500);
@@ -147,7 +141,7 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
       const finalData = { ...negotiationData, speedWeight: rating };
       setNegotiationData(finalData);
       addMessage("user", rating.toString());
-      
+
       setTimeout(() => {
         console.log("Negotiation Data:", finalData);
         setConversationStep("complete");
@@ -163,7 +157,7 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
       <div className="flex items-center justify-center min-h-[calc(100vh-240px)]">
         <Card className="p-8 text-center max-w-md">
           <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
-          <p className="text-lg">I will get back to you when the right vendors were found...</p>
+          <p className="text-lg">You will recieve an email when the right vendors were found...</p>
         </Card>
       </div>
     );
