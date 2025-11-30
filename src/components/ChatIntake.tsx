@@ -19,7 +19,7 @@ interface ChatIntakeProps {
 }
 
 // n8n webhook URL for chat intake
-const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook/chat";
+const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook-test/chat";
 
 // Starter prompt cards
 const STARTER_PROMPTS = [
