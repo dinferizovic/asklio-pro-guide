@@ -165,7 +165,10 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
       <div className="flex items-center justify-center min-h-[calc(100vh-240px)]">
         <div className="w-full max-w-2xl px-4">
           <div className="text-center mb-8">
-            <h1 className="text-5xl font-bold text-foreground mb-3">LioAnswers</h1>
+            <h1 className="text-5xl font-bold mb-3">
+              <span className="text-primary">Lio</span>
+              <span className="text-foreground">Answers</span>
+            </h1>
             <p className="text-lg text-muted-foreground">AI-powered procurement optimization</p>
           </div>
 

@@ -179,7 +179,6 @@ const Index = () => {
               variant="outline"
               className="border-border bg-background hover:bg-accent"
             >
-              <LogOut className="h-4 w-4 mr-2" />
               Logout
             </Button>
           </div>
