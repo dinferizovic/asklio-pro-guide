@@ -118,10 +118,8 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     if (response.action === "intake_complete") {
       // Wait 2 seconds to let user read the final message
       setTimeout(() => {
-        // Use vendors from response, or fallback to mock data
-        const vendorResults = response.vendors || MOCK_RESULTS;
-        onComplete(vendorResults);
-        console.log("Intake complete. Showing results.");
+        setIntakeComplete(true);
+        console.log("Intake complete. Showing confirmation screen.");
       }, 2000);
     }
   };
@@ -154,9 +152,8 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     // Handle intake_complete if needed
     if (response.action === "intake_complete") {
       setTimeout(() => {
-        const vendorResults = response.vendors || MOCK_RESULTS;
-        onComplete(vendorResults);
-        console.log("Intake complete. Showing results.");
+        setIntakeComplete(true);
+        console.log("Intake complete. Showing confirmation screen.");
       }, 2000);
     }
   };
@@ -182,8 +179,7 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     // Handle intake_complete if needed
     if (response.action === "intake_complete") {
       setTimeout(() => {
-        const vendorResults = response.vendors || MOCK_RESULTS;
-        onComplete(vendorResults);
+        setIntakeComplete(true);
       }, 2000);
     }
   };
