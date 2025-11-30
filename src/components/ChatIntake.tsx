@@ -2,7 +2,7 @@ import { useState, useRef, useEffect } from "react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
-import { Send, Loader2 } from "lucide-react";
+import { Send, Loader2, Check } from "lucide-react";
 import { ChatMessage } from "@/components/ChatMessage";
 import { MOCK_RESULTS } from "@/data/mockVendors";
 
@@ -15,6 +15,7 @@ interface Message {
 interface ChatIntakeProps {
   onComplete: (options: any[]) => void;
   onUpdateTitle?: (title: string) => void;
+  onNewRequest?: () => void;
 }
 
 // n8n webhook URL for chat intake
@@ -39,7 +40,7 @@ const STARTER_PROMPTS = [
   }
 ];
 
-export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
+export const ChatIntake = ({ onComplete, onUpdateTitle, onNewRequest }: ChatIntakeProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
   const [sessionId] = useState(() => `session-${Date.now()}-${Math.random().toString(36).slice(2, 9)}`);
@@ -184,6 +185,10 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     }
   };
 
+  const handleGoBackToChat = () => {
+    setIntakeComplete(false);
+  };
+
   const isInitialState = messages.length === 0;
 
   // Processing state: show confirmation card after intake is complete
@@ -191,11 +196,23 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     return (
       <div className="flex items-center justify-center min-h-[calc(100vh-240px)]">
         <Card className="p-8 text-center max-w-md">
-          <Loader2 className="h-12 w-12 animate-spin mx-auto mb-4 text-primary" />
+          {/* Blue checkmark inside circle */}
+          <div className="w-16 h-16 rounded-full bg-blue-500 flex items-center justify-center mx-auto mb-4">
+            <Check className="h-10 w-10 text-white" />
+          </div>
           <p className="text-lg mb-2">All information is successfully gathered.</p>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm text-muted-foreground mb-6">
             You will receive an email when the right vendors have been found.
           </p>
+          {/* Action buttons */}
+          <div className="flex gap-4 justify-center">
+            <Button variant="outline" onClick={handleGoBackToChat}>
+              Go back
+            </Button>
+            <Button onClick={onNewRequest}>
+              New Request
+            </Button>
+          </div>
         </Card>
       </div>
     );
