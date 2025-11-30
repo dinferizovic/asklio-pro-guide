@@ -3,10 +3,11 @@ import { ChatIntake } from "@/components/ChatIntake";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { Sidebar } from "@/components/Sidebar";
 import { VendorOption } from "@/data/mockVendors";
-import { Moon, FileText, MessageSquare, LogOut } from "lucide-react";
+import { Moon, Sun, FileText, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import askLioLogo from "@/assets/asklio-logo.png";
 import { toast } from "sonner";
+import { useTheme } from "next-themes";
 
 export interface ProcurementRequest {
   items: string;
@@ -47,6 +48,7 @@ interface Session {
 }
 
 const Index = () => {
+  const { theme, setTheme } = useTheme();
   const initialSessionId = `session-${Date.now()}`;
   const [sessions, setSessions] = useState<Session[]>([{
     id: initialSessionId,
@@ -167,8 +169,15 @@ const Index = () => {
 
           {/* Right: Actions */}
           <div className="flex items-center gap-3">
-            <button className="p-2 hover:bg-accent rounded-lg transition-colors">
-              <Moon className="h-5 w-5 text-muted-foreground" />
+            <button 
+              onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+              className="p-2 hover:bg-accent rounded-lg transition-colors"
+            >
+              {theme === "dark" ? (
+                <Sun className="h-5 w-5 text-muted-foreground" />
+              ) : (
+                <Moon className="h-5 w-5 text-muted-foreground" />
+              )}
             </button>
             <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
               <FileText className="h-4 w-4 mr-2" />
@@ -198,7 +207,7 @@ const Index = () => {
         />
 
         {/* Right Main Content Area */}
-        <div className="flex-1 flex flex-col overflow-hidden bg-white">
+        <div className="flex-1 flex flex-col overflow-hidden bg-card">
           {/* Navigation Tabs */}
           <div className="px-6 border-b border-border bg-card shrink-0">
             <nav className="flex items-center gap-8">
