@@ -17,7 +17,7 @@ interface ChatIntakeProps {
 }
 
 // n8n webhook URL for chat intake
-const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook-test/chat";
+const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook/chat";
 
 export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
