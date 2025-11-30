@@ -57,7 +57,7 @@ export const Sidebar = ({
   };
 
   return (
-    <div className="w-[260px] h-full bg-[#F9FAFB] border-r border-border flex flex-col">
+    <div className="w-[260px] h-full bg-sidebar border-r border-border flex flex-col">
       {/* Top Section - New Request Button */}
       <div className="p-4">
         <Button
@@ -83,7 +83,7 @@ export const Sidebar = ({
                 key={session.id}
                 className={`relative group rounded-md transition-colors ${
                   activeSessionId === session.id
-                    ? "bg-[#EEF2FF] border-l-2 border-primary"
+                    ? "bg-primary/10 border-l-2 border-primary"
                     : "hover:bg-accent"
                 }`}
               >

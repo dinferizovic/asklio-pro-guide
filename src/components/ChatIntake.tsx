@@ -254,8 +254,8 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
                 >
                   <span className="text-2xl">{prompt.icon}</span>
                   <div>
-                    <p className="font-semibold text-gray-900">{prompt.title}</p>
-                    <p className="text-sm text-gray-500">{prompt.subtitle}</p>
+                    <p className="font-semibold text-primary">{prompt.title}</p>
+                    <p className="text-sm text-muted-foreground">{prompt.subtitle}</p>
                   </div>
                 </button>
               ))}
@@ -272,8 +272,8 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
             >
               <span className="text-2xl">{STARTER_PROMPTS[2].icon}</span>
               <div>
-                <p className="font-semibold text-gray-900">{STARTER_PROMPTS[2].title}</p>
-                <p className="text-sm text-gray-500">{STARTER_PROMPTS[2].subtitle}</p>
+                <p className="font-semibold text-primary">{STARTER_PROMPTS[2].title}</p>
+                <p className="text-sm text-muted-foreground">{STARTER_PROMPTS[2].subtitle}</p>
               </div>
             </button>
           </div>
