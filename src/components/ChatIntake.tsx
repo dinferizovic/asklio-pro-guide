@@ -20,6 +20,25 @@ interface ChatIntakeProps {
 // n8n webhook URL for chat intake
 const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook/chat";
 
+// Starter prompt cards
+const STARTER_PROMPTS = [
+  {
+    icon: "💻",
+    title: "IT Hardware",
+    subtitle: "Buy 50 MacBook Pros for Engineering."
+  },
+  {
+    icon: "☕",
+    title: "Office Supplies", 
+    subtitle: "Restock kitchen coffee & snacks."
+  },
+  {
+    icon: "🔧",
+    title: "Maintenance",
+    subtitle: "Find HVAC repair for Munich HQ."
+  }
+];
+
 export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
   const [inputValue, setInputValue] = useState("");
@@ -142,6 +161,33 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     }
   };
 
+  // Handle starter card clicks
+  const handleStarterClick = async (prompt: string) => {
+    // Add user message to UI immediately
+    const updatedMessages = [{ role: "user" as const, content: prompt }];
+    setMessages(updatedMessages);
+    
+    // Update session title
+    if (onUpdateTitle) {
+      const title = prompt.length > 30 ? prompt.substring(0, 30) + "..." : prompt;
+      onUpdateTitle(title);
+    }
+    
+    // Send to n8n webhook
+    const response = await sendToWebhook(prompt);
+    
+    // Add assistant reply
+    setMessages((prev) => [...prev, { role: "assistant", content: response.reply }]);
+    
+    // Handle intake_complete if needed
+    if (response.action === "intake_complete") {
+      setTimeout(() => {
+        const vendorResults = response.vendors || MOCK_RESULTS;
+        onComplete(vendorResults);
+      }, 2000);
+    }
+  };
+
   const isInitialState = messages.length === 0;
 
   // Processing state: show confirmation card after intake is complete
@@ -190,6 +236,46 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
             >
               {isLoading ? <Loader2 className="h-5 w-5 animate-spin" /> : <Send className="h-5 w-5" />}
             </Button>
+          </div>
+
+          {/* Suggested Query Cards - Pyramid Layout */}
+          <div className="mt-8 flex flex-col items-center gap-4">
+            {/* Top row - 2 cards */}
+            <div className="flex gap-4">
+              {STARTER_PROMPTS.slice(0, 2).map((prompt, index) => (
+                <button
+                  key={index}
+                  onClick={() => handleStarterClick(prompt.subtitle)}
+                  disabled={isLoading}
+                  className="flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg
+                             text-left cursor-pointer w-[220px]
+                             hover:scale-105 hover:border-primary hover:shadow-md
+                             transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+                >
+                  <span className="text-2xl">{prompt.icon}</span>
+                  <div>
+                    <p className="font-semibold text-gray-900">{prompt.title}</p>
+                    <p className="text-sm text-gray-500">{prompt.subtitle}</p>
+                  </div>
+                </button>
+              ))}
+            </div>
+            
+            {/* Bottom row - 1 centered card */}
+            <button
+              onClick={() => handleStarterClick(STARTER_PROMPTS[2].subtitle)}
+              disabled={isLoading}
+              className="flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg
+                         text-left cursor-pointer w-[220px]
+                         hover:scale-105 hover:border-primary hover:shadow-md
+                         transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
+            >
+              <span className="text-2xl">{STARTER_PROMPTS[2].icon}</span>
+              <div>
+                <p className="font-semibold text-gray-900">{STARTER_PROMPTS[2].title}</p>
+                <p className="text-sm text-gray-500">{STARTER_PROMPTS[2].subtitle}</p>
+              </div>
+            </button>
           </div>
         </div>
       </div>
