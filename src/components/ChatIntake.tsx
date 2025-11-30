@@ -16,8 +16,8 @@ interface ChatIntakeProps {
   onUpdateTitle?: (title: string) => void;
 }
 
-// Placeholder for n8n webhook URL - replace with your actual webhook URL
-const INTAKE_WEBHOOK_URL = "PLACEHOLDER_URL";
+// n8n webhook URL for chat intake
+const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook-test/chat";
 
 export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
   const [messages, setMessages] = useState<Message[]>([]);
@@ -44,13 +44,13 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     setIsLoading(true);
 
     try {
-      const response = await fetch(INTAKE_WEBHOOK_URL, {
+      const response = await fetch(N8N_WEBHOOK_URL, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
+          message: userMessage,
           sessionId,
-          userMessage,
-          chatHistory: messages, // Full history of { role, content } objects
+          history: messages, // Full history of { role, content } objects
         }),
       });
 
