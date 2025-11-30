@@ -4,6 +4,7 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Send, Loader2 } from "lucide-react";
 import { ChatMessage } from "@/components/ChatMessage";
+import { MOCK_RESULTS } from "@/data/mockVendors";
 
 // Simplified message type for relay
 interface Message {
@@ -89,17 +90,19 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     }
 
     // 3. Send to n8n and wait for response
-    const { reply, action } = await sendToWebhook(userMessage);
+    const response = await sendToWebhook(userMessage);
 
     // 4. Add assistant reply to chat
-    setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+    setMessages((prev) => [...prev, { role: "assistant", content: response.reply }]);
 
     // 5. Handle transition if intake is complete
-    if (action === "intake_complete") {
+    if (response.action === "intake_complete") {
       // Wait 2 seconds to let user read the final message
       setTimeout(() => {
-        setIntakeComplete(true);
-        console.log("Intake complete. Session ID:", sessionId);
+        // Use vendors from response, or fallback to mock data
+        const vendorResults = response.vendors || MOCK_RESULTS;
+        onComplete(vendorResults);
+        console.log("Intake complete. Showing results.");
       }, 2000);
     }
   };
@@ -124,16 +127,17 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
     setMessages(updatedMessages);
 
     // Send to n8n webhook
-    const { reply, action } = await sendToWebhook(userMessage);
+    const response = await sendToWebhook(userMessage);
 
     // Add assistant reply
-    setMessages((prev) => [...prev, { role: "assistant", content: reply }]);
+    setMessages((prev) => [...prev, { role: "assistant", content: response.reply }]);
 
     // Handle intake_complete if needed
-    if (action === "intake_complete") {
+    if (response.action === "intake_complete") {
       setTimeout(() => {
-        setIntakeComplete(true);
-        console.log("Intake complete. Session ID:", sessionId);
+        const vendorResults = response.vendors || MOCK_RESULTS;
+        onComplete(vendorResults);
+        console.log("Intake complete. Showing results.");
       }, 2000);
     }
   };

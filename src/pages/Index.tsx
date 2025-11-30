@@ -1,7 +1,8 @@
 import { useState } from "react";
 import { ChatIntake } from "@/components/ChatIntake";
-import { ResultsView } from "@/components/ResultsView";
+import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { Sidebar } from "@/components/Sidebar";
+import { VendorOption } from "@/data/mockVendors";
 import { Moon, FileText, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import askLioLogo from "@/assets/asklio-logo.png";
@@ -27,15 +28,7 @@ export interface Constraints {
   must_be_premium_brand: boolean;
 }
 
-export interface VendorOption {
-  label: string;
-  vendor_name: string;
-  total_price: number;
-  delivery_days: number;
-  quality_score: number;
-  warranty_years: number;
-  extras: string[];
-}
+// VendorOption interface moved to src/data/mockVendors.ts
 
 interface Message {
   id: string;
@@ -243,10 +236,9 @@ const Index = () => {
                   onUpdateTitle={updateSessionTitle}
                 />
               ) : (
-                <ResultsView
-                  options={activeSession.options}
-                  selectedOption={activeSession.selectedOption}
-                  onSelectOption={handleSelectOption}
+                <ResultsDashboard
+                  vendors={activeSession.options}
+                  onSelectVendor={handleSelectOption}
                   onReset={handleReset}
                 />
               )}
