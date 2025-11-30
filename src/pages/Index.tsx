@@ -242,6 +242,7 @@ const Index = () => {
                   key={activeSession.id}
                   onComplete={handleNegotiationComplete}
                   onUpdateTitle={updateSessionTitle}
+                  onNewRequest={handleNewRequest}
                 />
               ) : (
                 <ResultsDashboard
