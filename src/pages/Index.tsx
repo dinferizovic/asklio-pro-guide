@@ -225,7 +225,7 @@ const Index = () => {
 
           {/* Main Content - Centered and Constrained */}
           <main className="flex-1 overflow-y-auto bg-background">
-            <div className="max-w-[800px] mx-auto px-6 py-8">
+            <div className={`mx-auto px-6 py-8 ${activeSession?.mode === "results" ? "max-w-full" : "max-w-[800px]"}`}>
               {!activeSession ? (
                 <div className="flex items-center justify-center h-full">
                   <div className="text-center">
