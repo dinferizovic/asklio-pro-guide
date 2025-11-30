@@ -206,15 +206,18 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
         <div className="border-t border-border bg-muted/30 p-4">
           {/* Rating buttons - shown when bot asks for 1-5 rating */}
           {shouldShowRatingButtons() && (
-            <div className="flex justify-center gap-3 mb-3">
-              {[1, 2, 3, 4, 5].map((rating) => (
+            <div className="flex justify-center gap-4 mb-4">
+              {[1, 2, 3, 4, 5].map((rating, index) => (
                 <button
                   key={rating}
                   onClick={() => handleRatingClick(rating)}
                   disabled={isLoading}
-                  className="h-10 w-10 rounded-full border-2 border-primary text-primary font-semibold 
-                             hover:bg-primary hover:text-primary-foreground 
-                             transition-colors duration-200 disabled:opacity-50"
+                  style={{ animationDelay: `${index * 50}ms` }}
+                  className="h-12 w-12 rounded-full border border-primary/20 bg-background text-foreground 
+                             font-semibold shadow-sm hover:bg-primary hover:text-primary-foreground 
+                             hover:border-primary hover:shadow-md
+                             transition-all duration-200 disabled:opacity-50 
+                             animate-in fade-in-0 zoom-in-95"
                 >
                   {rating}
                 </button>
