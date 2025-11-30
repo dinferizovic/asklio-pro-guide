@@ -14,23 +14,14 @@ export const ResultsDashboard = ({ vendors, onSelectVendor, onReset }: ResultsDa
     <div className="w-full h-full overflow-y-auto">
       {/* Header */}
       <div className="mb-8 text-center pt-4">
-        <h1 className="text-4xl font-bold text-foreground mb-2">
-          Negotiation Complete
-        </h1>
-        <p className="text-lg text-muted-foreground">
-          Top {vendors.length} Options Generated
-        </p>
+        <h1 className="text-4xl font-bold text-foreground mb-2">Negotiation Complete</h1>
+        <p className="text-lg text-muted-foreground">Top {vendors.length} Options</p>
       </div>
 
       {/* Grid Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-6 px-4 pb-8">
         {vendors.map((vendor, index) => (
-          <VendorCard
-            key={vendor.id}
-            vendor={vendor}
-            onSelect={onSelectVendor}
-            index={index}
-          />
+          <VendorCard key={vendor.id} vendor={vendor} onSelect={onSelectVendor} index={index} />
         ))}
       </div>
 
