@@ -3,6 +3,8 @@ import { ChatIntake } from "@/components/ChatIntake";
 import { ResultsDashboard } from "@/components/ResultsDashboard";
 import { Sidebar } from "@/components/Sidebar";
 import { VendorOption } from "@/data/mockVendors";
+import { TradeoffOption } from "@/types/tradeoff";
+import { VendorResults } from "@/components/VendorResults";
 import { Moon, Sun, FileText, MessageSquare, LogOut } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import askLioLogo from "@/assets/asklio-logo.png";
@@ -43,8 +45,8 @@ interface Session {
   title: string;
   mode: "intake" | "results";
   messages: Message[];
-  options: VendorOption[];
-  selectedOption: VendorOption | null;
+  options: VendorOption[] | TradeoffOption[];
+  selectedOption: VendorOption | TradeoffOption | null;
 }
 
 const Index = () => {
@@ -98,7 +100,7 @@ const Index = () => {
     setActiveSessionId(sessionId);
   };
 
-  const handleNegotiationComplete = (results: VendorOption[]) => {
+  const handleNegotiationComplete = (results: TradeoffOption[] | VendorOption[]) => {
     if (!activeSessionId) return;
     
     setSessions((prev) =>
@@ -114,7 +116,7 @@ const Index = () => {
     handleNewRequest();
   };
 
-  const handleSelectOption = (option: VendorOption) => {
+  const handleSelectOption = (option: VendorOption | TradeoffOption) => {
     if (!activeSessionId) return;
     
     setSessions((prev) =>
@@ -245,11 +247,20 @@ const Index = () => {
                   onNewRequest={handleNewRequest}
                 />
               ) : (
-                <ResultsDashboard
-                  vendors={activeSession.options}
-                  onSelectVendor={handleSelectOption}
-                  onReset={handleReset}
-                />
+                // Check if options are TradeoffOption[] or VendorOption[]
+                activeSession.options.length > 0 && 'vendor_id' in activeSession.options[0] ? (
+                  <VendorResults
+                    options={activeSession.options as TradeoffOption[]}
+                    onSelectOption={handleSelectOption}
+                    onReset={handleReset}
+                  />
+                ) : (
+                  <ResultsDashboard
+                    vendors={activeSession.options as VendorOption[]}
+                    onSelectVendor={handleSelectOption}
+                    onReset={handleReset}
+                  />
+                )
               )}
             </div>
           </main>

@@ -4,7 +4,8 @@ import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
 import { Send, Loader2, Check } from "lucide-react";
 import { ChatMessage } from "@/components/ChatMessage";
-import { MOCK_RESULTS } from "@/data/mockVendors";
+import { VendorOption, MOCK_RESULTS } from "@/data/mockVendors";
+import { TradeoffOption } from "@/types/tradeoff";
 
 // Simplified message type for relay
 interface Message {
@@ -13,10 +14,23 @@ interface Message {
 }
 
 interface ChatIntakeProps {
-  onComplete: (options: any[]) => void;
+  onComplete: (results: TradeoffOption[] | VendorOption[]) => void;
   onUpdateTitle?: (title: string) => void;
   onNewRequest?: () => void;
 }
+
+// Transform backend TradeoffOption[] to VendorOption[] for compatibility
+const transformTradeoffToVendors = (options: TradeoffOption[]): VendorOption[] => {
+  return options.map((opt, index) => ({
+    id: opt.vendor_id || index + 1,
+    name: opt.vendor_name,
+    price: opt.summary,
+    delivery: "",
+    quality_score: 3,
+    badges: [opt.label],
+    reasoning: opt.rationale
+  }));
+};
 
 // n8n webhook URL for chat intake
 const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook-test/chat";
@@ -117,11 +131,21 @@ export const ChatIntake = ({ onComplete, onUpdateTitle, onNewRequest }: ChatInta
 
     // 5. Handle transition if intake is complete
     if (response.action === "intake_complete") {
-      // Wait 2 seconds to let user read the final message
+      console.log("Intake complete, transitioning to results");
+      setIntakeComplete(true);
+      
+      // Extract tradeoff_options from backend response
+      const tradeoffOptions: TradeoffOption[] = response.tradeoff_options || [];
+      
+      // Transform to VendorOption[] or fallback to mock data
+      const vendors = tradeoffOptions.length > 0 
+        ? transformTradeoffToVendors(tradeoffOptions)
+        : MOCK_RESULTS;
+      
+      // Short delay for UX, then trigger redirect
       setTimeout(() => {
-        setIntakeComplete(true);
-        console.log("Intake complete. Showing confirmation screen.");
-      }, 2000);
+        onComplete(vendors);
+      }, 1500);
     }
   };
 
@@ -152,10 +176,21 @@ export const ChatIntake = ({ onComplete, onUpdateTitle, onNewRequest }: ChatInta
 
     // Handle intake_complete if needed
     if (response.action === "intake_complete") {
+      console.log("Intake complete, transitioning to results");
+      setIntakeComplete(true);
+      
+      // Extract tradeoff_options from backend response
+      const tradeoffOptions: TradeoffOption[] = response.tradeoff_options || [];
+      
+      // Transform to VendorOption[] or fallback to mock data
+      const vendors = tradeoffOptions.length > 0 
+        ? transformTradeoffToVendors(tradeoffOptions)
+        : MOCK_RESULTS;
+      
+      // Short delay for UX, then trigger redirect
       setTimeout(() => {
-        setIntakeComplete(true);
-        console.log("Intake complete. Showing confirmation screen.");
-      }, 2000);
+        onComplete(vendors);
+      }, 1500);
     }
   };
 
@@ -179,9 +214,21 @@ export const ChatIntake = ({ onComplete, onUpdateTitle, onNewRequest }: ChatInta
     
     // Handle intake_complete if needed
     if (response.action === "intake_complete") {
+      console.log("Intake complete, transitioning to results");
+      setIntakeComplete(true);
+      
+      // Extract tradeoff_options from backend response
+      const tradeoffOptions: TradeoffOption[] = response.tradeoff_options || [];
+      
+      // Transform to VendorOption[] or fallback to mock data
+      const vendors = tradeoffOptions.length > 0 
+        ? transformTradeoffToVendors(tradeoffOptions)
+        : MOCK_RESULTS;
+      
+      // Short delay for UX, then trigger redirect
       setTimeout(() => {
-        setIntakeComplete(true);
-      }, 2000);
+        onComplete(vendors);
+      }, 1500);
     }
   };
 
