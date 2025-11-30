@@ -33,7 +33,7 @@ const transformTradeoffToVendors = (options: TradeoffOption[]): VendorOption[] =
 };
 
 // n8n webhook URL for chat intake
-const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook-test/chat";
+const N8N_WEBHOOK_URL = "https://nikor.app.n8n.cloud/webhook/chat";
 
 // Starter prompt cards
 const STARTER_PROMPTS = [
