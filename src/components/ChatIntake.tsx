@@ -247,7 +247,7 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
                   key={index}
                   onClick={() => handleStarterClick(prompt.subtitle)}
                   disabled={isLoading}
-                  className="flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg
+                  className="flex items-start gap-3 p-4 bg-card border border-border rounded-lg
                              text-left cursor-pointer w-[220px]
                              hover:scale-105 hover:border-primary hover:shadow-md
                              transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
@@ -265,7 +265,7 @@ export const ChatIntake = ({ onComplete, onUpdateTitle }: ChatIntakeProps) => {
             <button
               onClick={() => handleStarterClick(STARTER_PROMPTS[2].subtitle)}
               disabled={isLoading}
-              className="flex items-start gap-3 p-4 bg-white border border-gray-200 rounded-lg
+              className="flex items-start gap-3 p-4 bg-card border border-border rounded-lg
                          text-left cursor-pointer w-[220px]
                          hover:scale-105 hover:border-primary hover:shadow-md
                          transition-all duration-200 disabled:opacity-50 disabled:cursor-not-allowed"
