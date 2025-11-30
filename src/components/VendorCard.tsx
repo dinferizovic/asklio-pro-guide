@@ -23,7 +23,7 @@ export const VendorCard = ({ vendor, onSelect, index }: VendorCardProps) => {
     <div
       style={{ animationDelay: `${index * 100}ms` }}
       className={`
-        min-w-[350px] snap-center bg-card rounded-xl shadow-md 
+        w-full bg-card rounded-xl shadow-md 
         transition-all duration-300 hover:shadow-xl hover:-translate-y-1
         flex flex-col animate-in fade-in-0 slide-in-from-bottom-4
         ${isAIPick ? "border-2 border-primary shadow-lg shadow-primary/20 scale-[1.02]" : "border border-border"}
